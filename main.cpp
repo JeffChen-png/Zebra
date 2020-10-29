@@ -1,32 +1,25 @@
-//
-// Adaptive Vision Library Example - "Point To Point Distance"
-//
-// {$Copyright} {$Year} {$CompanyName}
-// Version: {$Version}
-//
-
-
 #include <iostream>
 #include "AVL.h"
 
-int main()
-{
-    avl::Point2D a(0, 0);
-    avl::Point2D b(1, 1);
-    float distance;
+using namespace avl;
+using namespace std;
+using namespace atl;
 
-    try
-    {
-        avl::PointToPointDistance(a, b, 1.0f, distance, atl::NIL);
-    }
-    catch(const atl::Error& e)
-    {
-        std::cout << e.Kind() << ": " << e.Message() << std::endl;
-    }
+int main() {
 
-    std::cout << "Distance: " << distance << std::endl;
+    Image img1;
+    LoadImage("/home/rustam/zebra.jpg",false, img1);
 
-    Bitmap c = new Bitmap("zebra.jpg");
+    Image hsv_img;
+    RgbToHsv(img1, hsv_img);
+
+    Image img2;
+
+    //EqualizeImageHistogram(img, atl::NIL ,0.8, 0.8, img2);
+
+    //DetectLinePeak(img, LinePeakDetectionMethod::MaximalPixel, 128.0f, );
+
+    SaveImageToJpeg(img2,"/home/rustam/zebra_mode.jpg", NIL, false);
 
 
     return 0;
