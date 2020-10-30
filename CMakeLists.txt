@@ -1,5 +1,11 @@
-cmake_minimum_required(VERSION 3.5)
 project(untitled)
+
+set(CMAKE_CXX_STANDARD 14)
+
+add_executable(untitled main.cpp)
+
+cmake_minimum_required(VERSION 3.5)
+#project(avlexample)
 
 find_package(
         AVL
@@ -9,15 +15,15 @@ find_package(
         REQUIRED
 )
 
-add_executable(
-        # executable name
-        example_exec
-        # source files
-        main.cpp
-)
+#add_executable(
+#        # executable name
+#        example_exec
+#        # source files
+#        main.cpp
+#)
 
 target_link_libraries(
-        example_exec
+        untitled
         PUBLIC
         AVL
 )
