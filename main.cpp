@@ -1,5 +1,6 @@
 #include <iostream>
 #include "AVL.h"
+#include "STD.h"
 
 using namespace avl;
 using namespace std;
@@ -9,48 +10,54 @@ using namespace avs;
 int main() {
 
     Image img;
-
     LoadImage("/home/rustam/Рабочий стол/zebra1.jpg",false, img);
 
     Image img_gray;
     AverageChannels(img,NIL,img_gray);
-    SaveImage(img_gray,NIL,"/home/rustam/Рабочий стол/zebra1_grey.jpg",false);
-
-    //Image img_equalized;
-    //EqualizeImageHistogram(img,NIL,0.0,0.0,img_equalized);
-    //SaveImage(img_equalized,NIL,"/home/rustam/Рабочий стол/zebra2_equalized.jpg",false);
 
     Image img_Threshold;
-    ThresholdImage(img_gray,NIL,128.0f,NIL,0.3,img_Threshold);
-    SaveImage(img_Threshold,NIL,"/home/rustam/Рабочий стол/zebra1_Threshold.jpg",false);
-
+    ThresholdImage(img_gray,NIL,140.0f,NIL,0.3,img_Threshold);
+    
     Image img_erode;
-
     ErodeImage(img_Threshold,NIL,NIL,NIL,KernelShape::Box,1,NIL,img_erode);
-    SaveImage(img_erode,NIL,"/home/rustam/Рабочий стол/zebra1_erode.jpg",false);
 
-    /////////////////////////////////////////////////////////////////
-    /*
-     * нахождение контуров с последующей отрисовкой (не работает без лицензии) terminate called after throwing an instance of 'avl::AvlLicenseError'
-     *
-    Image img_det;
-    LoadImage("/home/rustam/Рабочий стол/zebra1.jpg",false, img_det);
+    Image img_det = img;
 
     Pixel pixel;
-    AvsFilter_MakePixel(1,1,1,1,pixel);
+    AvsFilter_MakePixel(255,120,120,255,pixel);
+    Array<Path> out_path_array;
 
-    Array<Path> out;
-    DetectEdges_AsPaths_Mask(img_Threshold,NIL,EdgeMaskFilter::Sobel,35.0f,15.0f,NIL,30.0f,0.0f,NIL,0.0f,out);
+    int w = img.Width();
+    int h = img.Height();
 
-    DrawPath(img_det,out[1],NIL,pixel,DrawingStyle ( DrawingMode:: HighQuality, 1.0f,1.0f, 0, NIL, 1.0f ));
-     */
-    ////////////////////////////////////////////////////////////////
+    Region rec_region;
+    Rectangle2D box({0,h/2},0,w,h/2);
+    CreateRectangleRegion(box,NIL,w,h,rec_region,NIL);
 
-    Array<Segment2D> out1;
-    Image img_lines;
-    Image img_color;
-    //DetectSegments(img_erode,NIL,1.0f,20.0f,20.0f,20.0f,20.0f,10.0f,out1,img_lines,img_color );
+    DetectEdges_AsPaths_Mask(img_erode,rec_region,EdgeMaskFilter::Prewitt,10.0f,5.0f,NIL,100,0.5f,NIL,0.0f,out_path_array);
 
+    for (int i = 0; i < out_path_array.Size();i++) {
+        DrawPath(img_det, out_path_array[i], NIL, pixel, DrawingStyle(DrawingMode::HighQuality, 1.0f, 1.0f, false, PointShape::Type::Circle, 1.0f));
+    }
+
+     SaveImage(img_det,NIL,"/home/rustam/Рабочий стол/zebra.jpg",false);
+
+     ////////////////////////////////////////////////////////////////
+     /*
+     Image img_det;
+     LoadImage("/home/rustam/Рабочий стол/zebra1.jpg",false, img_det);
+
+     Pixel pixel;
+     AvsFilter_MakePixel(1,1,1,1,pixel);
+
+     Array<Segment2D> out;
+     Image img_lines;
+     Image img_color;
+     DetectSegments(img_erode,NIL,1.0f,20.0f,20.0f,20.0f,20.0f,10.0f,out,img_lines,img_color );
+
+     DrawSegments_SingleColor(img_det, {как перейти от out к conditional out}, NIL, pixel,DrawingStyle(DrawingMode::Fast, 0.5f, 3.0f, false, PointShape::Type::Circle, 3.0f),MarkerType::None, 5.0f, 1, img_det);
+     SaveImage(img_det,NIL,"/home/rustam/Рабочий стол/zebra1_ris.jpg",false);
+      */
     ////////////////////////////////////////////////////////////////
 
     /*
